@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de cursos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Listado de cursos</h1>
+
+    <!-- Mensaje de error -->
+    <div class="alert alert-danger" th:if="${msgError}" th:text="${msgError}"></div>
+
+    <!-- Filtro por nombre -->
+    <form method="post" action="#" th:action="@{/findByName}" th:object="${findForm}" class="mb-2">
+        <label>Buscar por nombre:
+            <input type="text" th:field="*{nombre}"/>
+        </label>
+        <input type="submit" value="Buscar" class="btn btn-secondary btn-sm"/>
+    </form>
+
+    <!-- Filtro por temática -->
+    <div class="mb-2">
+        Filtro por temática:
+        <select id="tematica" onChange="changeTematica();">
+            <option value="">Todos</option>
+            <option th:each="tem : ${T(com.example.cursos.domain.Tematica).values()}"
+                    th:value="${tem}" th:text="${tem}"
+                    th:selected="${tem} == ${tematicaSeleccionada} ? true : false">
+            </option>
+        </select>
+    </div>
+
+    <a th:href="@{/}">Reestablecer</a>
+
+    <table class="table table-striped mt-2">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Temática</th>
+            <th>Editar</th>
+            <th>Borrar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="curso : ${listaCursos}">
+            <td th:text="${curso.id}"></td>
+            <td><a th:href="@{/ver/{id}(id=${curso.id})}" th:text="${curso.nombre}"></a></td>
+            <td th:text="${curso.precio}"></td>
+            <td th:text="${curso.tematica}"></td>
+            <td><a th:href="@{/editar/{id}(id=${curso.id})}" class="btn btn-secondary btn-sm">Editar</a></td>
+            <td><a th:href="@{/borrar/{id}(id=${curso.id})}" class="btn btn-dark btn-sm">Borrar</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/nuevo}" class="btn btn-dark">Nuevo curso</a>
+</div>
+
+<script>
+    function changeTematica() {
+        const select = document.getElementById("tematica");
+        if (select.value == "") window.location.href = "/";
+        else window.location.href = "/findByTematica/" + select.value;
+    }
+</script>
+</body>
+</html>
